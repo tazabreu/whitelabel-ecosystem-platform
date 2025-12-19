@@ -4,16 +4,19 @@ server:
 spring:
   application:
     name: credit-card-service
+  autoconfigure:
+    exclude:
+      - io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration
 
   datasource:
     url: jdbc:postgresql://${CREDIT_CARD_DB_HOST:localhost}:${CREDIT_CARD_DB_PORT:5433}/${CREDIT_CARD_DB_NAME:credit_card_db}
-    username: ${CREDIT_CARD_DB_USER:postgres}
-    password: ${CREDIT_CARD_DB_PASSWORD:postgres}
+    username: ${CREDIT_CARD_DB_USER:user}
+    password: ${CREDIT_CARD_DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -21,7 +24,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
-    bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:19092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

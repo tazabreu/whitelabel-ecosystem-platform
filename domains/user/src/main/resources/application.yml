@@ -4,16 +4,19 @@ server:
 spring:
   application:
     name: user-service
+  autoconfigure:
+    exclude:
+      - io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration
 
   datasource:
     url: jdbc:postgresql://${USER_DB_HOST:localhost}:${USER_DB_PORT:5432}/${USER_DB_NAME:user_db}
-    username: ${USER_DB_USER:postgres}
-    password: ${USER_DB_PASSWORD:postgres}
+    username: ${USER_DB_USER:user}
+    password: ${USER_DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:

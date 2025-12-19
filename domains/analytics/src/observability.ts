@@ -4,7 +4,6 @@ import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { Resource } from "@opentelemetry/resources";
 import {
   ATTR_SERVICE_NAME,
-  ATTR_DEPLOYMENT_ENVIRONMENT,
 } from "@opentelemetry/semantic-conventions";
 
 const SERVICE_NAME = process.env.OTEL_SERVICE_NAME || "analytics-service";
@@ -14,7 +13,7 @@ const ENVIRONMENT = process.env.DEPLOYMENT_ENVIRONMENT || "local";
 
 const resource = new Resource({
   [ATTR_SERVICE_NAME]: SERVICE_NAME,
-  [ATTR_DEPLOYMENT_ENVIRONMENT]: ENVIRONMENT,
+  "deployment.environment": ENVIRONMENT,
 });
 
 const traceExporter = new OTLPTraceExporter({
