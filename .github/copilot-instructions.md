@@ -174,11 +174,11 @@ test(cards): add integration tests
 
 All components MUST read Splunk config from environment variables (no hardcoding):
 
-- `SPLUNK_HEC_URL`
-- `SPLUNK_HEC_TOKEN` (secret)
-- `SPLUNK_SOURCE` (optional)
-- `SPLUNK_SOURCETYPE` (optional)
-- `SPLUNK_INDEX` (optional)
+- `SPLUNK_HEC_URL` - HTTP Event Collector endpoint URL for sending logs/events
+- `SPLUNK_HEC_TOKEN` - Authentication token for HEC (secret, never commit)
+- `SPLUNK_SOURCE` - Optional source identifier for event origin
+- `SPLUNK_SOURCETYPE` - Optional source type for parsing/indexing rules
+- `SPLUNK_INDEX` - Optional target index for event storage
 
 ## Build and Test Commands
 
