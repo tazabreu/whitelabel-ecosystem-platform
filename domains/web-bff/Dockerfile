@@ -1,11 +1,13 @@
 # Multi-stage build for Spring Boot Web BFF
-FROM gradle:8.5-jdk21-alpine AS builder
+FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 COPY build.gradle.kts settings.gradle.kts ./
+COPY gradlew gradlew.bat ./
+COPY gradle ./gradle
 COPY src ./src
-RUN gradle build -x test --no-daemon
+RUN chmod +x gradlew && ./gradlew build -x test --no-daemon
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 

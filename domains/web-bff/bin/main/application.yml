@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: web-bff
+  autoconfigure:
+    exclude:
+      - io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration
 
 # Service URLs
 services:
