@@ -1,0 +1,30 @@
+name: 'ecosystem_lakehouse'
+version: '0.1.0'
+config-version: 2
+
+profile: 'ecosystem_lakehouse'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Variables for environment-specific configuration
+vars:
+  environment: "{{ env_var('DEPLOYMENT_ENVIRONMENT', 'local') }}"
+
+# Model configurations
+models:
+  ecosystem_lakehouse:
+    +materialized: table
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+

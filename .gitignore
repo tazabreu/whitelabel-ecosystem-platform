@@ -1,0 +1,100 @@
+# ================================
+# ACME Ecosystem Platform .gitignore
+# ================================
+
+# ----------------
+# Environment & Secrets
+# ----------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ----------------
+# Node / Next.js
+# ----------------
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ----------------
+# Java / Gradle / Spring
+# ----------------
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+replay_pid*
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# ----------------
+# Python / dbt
+# ----------------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.dbt/
+target/
+dbt_packages/
+logs/
+
+# ----------------
+# DuckDB / Data
+# ----------------
+*.duckdb
+*.duckdb.wal
+*.parquet
+warehouse/
+
+# ----------------
+# Docker
+# ----------------
+docker-compose.override.yml
+
+# ----------------
+# IDE / Editor
+# ----------------
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ----------------
+# Testing
+# ----------------
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# ----------------
+# Misc
+# ----------------
+*.tmp
+*.temp
+*.bak
+

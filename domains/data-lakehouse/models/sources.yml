@@ -1,0 +1,61 @@
+version: 2
+
+sources:
+  - name: analytics
+    description: "Analytics events from the Analytics service database"
+    database: "{{ env_var('ANALYTICS_DB_NAME', 'analytics_db') }}"
+    schema: public
+    tables:
+      - name: analytics_events
+        description: "Raw analytics events from all ecosystem services"
+        columns:
+          - name: id
+            description: "Primary key"
+          - name: event_id
+            description: "Unique event identifier"
+          - name: event_name
+            description: "Name of the event (e.g., logged_in, purchase_simulated)"
+          - name: domain
+            description: "Domain that originated the event"
+          - name: entity
+            description: "Entity type within the domain"
+          - name: action
+            description: "Action performed"
+          - name: timestamp
+            description: "When the event occurred"
+          - name: journey_id
+            description: "Journey identifier for correlation"
+          - name: user_ecosystem_id
+            description: "User ecosystem identifier"
+          - name: trace_id
+            description: "OpenTelemetry trace ID"
+          - name: span_id
+            description: "OpenTelemetry span ID"
+          - name: source
+            description: "Source service"
+          - name: metadata
+            description: "Additional event-specific data (JSONB)"
+
+      - name: journeys
+        description: "Aggregated journey information"
+        columns:
+          - name: journey_id
+            description: "Unique journey identifier"
+          - name: user_ecosystem_id
+            description: "User ecosystem identifier"
+          - name: started_at
+            description: "Journey start timestamp"
+          - name: ended_at
+            description: "Journey end timestamp"
+          - name: event_count
+            description: "Number of events in the journey"
+
+  # Note: For MVP, we're using sample seed data
+  # In production, these would be external sources or federated queries
+  - name: sample_data
+    description: "Sample data for local development"
+    schema: main
+    tables:
+      - name: sample_events
+        description: "Sample analytics events from seeds"
+

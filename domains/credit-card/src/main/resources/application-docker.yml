@@ -1,0 +1,28 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: credit-card-service
+  datasource:
+    url: jdbc:postgresql://postgres-credit-card:5432/credit_card_db
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+# OpenTelemetry
+otel:
+  exporter:
+    otlp:
+      endpoint: http://otel-collector:4317
+
+# Logging
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com.ecosystem: INFO
+    org.springframework: INFO
+

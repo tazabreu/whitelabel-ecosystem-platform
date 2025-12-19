@@ -1,0 +1,256 @@
+services:
+  # =============================================================================
+  # Infrastructure Services
+  # =============================================================================
+  
+  postgres-user:
+    image: postgres:16-alpine
+    container_name: ecosystem-postgres-user
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d user_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecosystem
+
+  postgres-credit-card:
+    image: postgres:16-alpine
+    container_name: ecosystem-postgres-credit-card
+    environment:
+      POSTGRES_DB: credit_card_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-credit-card-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d credit_card_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecosystem
+
+  postgres-analytics:
+    image: postgres:16-alpine
+    container_name: ecosystem-postgres-analytics
+    environment:
+      POSTGRES_DB: analytics_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-analytics-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d analytics_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecosystem
+
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: ecosystem-redpanda
+    command:
+      - redpanda
+      - start
+      - --smp 1
+      - --memory 1G
+      - --overprovisioned
+      - --set redpanda.auto_create_topics_enabled=true
+      - --set redpanda.default_topic_replications=1
+      - --set redpanda.default_topic_partitions=1
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+    ports:
+      - "19092:19092" # External Kafka API
+      - "9644:9644"   # Admin API
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecosystem
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: ecosystem-otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./shared/observability/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
+      - "8888:8888" # Prometheus metrics
+    environment:
+      SPLUNK_HEC_URL: ${SPLUNK_HEC_URL:-http://localhost:8088/services/collector}
+      SPLUNK_HEC_TOKEN: ${SPLUNK_HEC_TOKEN:-demo-token}
+      SPLUNK_SOURCE: ${SPLUNK_SOURCE:-ecosystem-platform}
+      SPLUNK_SOURCETYPE: ${SPLUNK_SOURCETYPE:-_json}
+      SPLUNK_INDEX: ${SPLUNK_INDEX:-main}
+    depends_on:
+      - redpanda
+    networks:
+      - ecosystem
+
+  # =============================================================================
+  # Domain Services
+  # =============================================================================
+
+  user-service:
+    build:
+      context: ./domains/user
+      dockerfile: Dockerfile
+    container_name: ecosystem-user-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      postgres-user:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ecosystem
+
+  credit-card-service:
+    build:
+      context: ./domains/credit-card
+      dockerfile: Dockerfile
+    container_name: ecosystem-credit-card-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      postgres-credit-card:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8082/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ecosystem
+
+  analytics-service:
+    build:
+      context: ./domains/analytics
+      dockerfile: Dockerfile
+    container_name: ecosystem-analytics-service
+    ports:
+      - "8083:8083"
+    environment:
+      NODE_ENV: production
+      PORT: 8083
+      POSTGRES_URL: postgresql://user:password@postgres-analytics:5432/analytics_db
+      REDPANDA_BROKERS: redpanda:9092
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      postgres-analytics:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8083/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ecosystem
+
+  web-bff:
+    build:
+      context: ./domains/web-bff
+      dockerfile: Dockerfile
+    container_name: ecosystem-web-bff
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      user-service:
+        condition: service_healthy
+      credit-card-service:
+        condition: service_healthy
+      analytics-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ecosystem
+
+  # =============================================================================
+  # Frontend
+  # =============================================================================
+
+  web-shell:
+    build:
+      context: ./platform/shells/web
+      dockerfile: Dockerfile
+    container_name: ecosystem-web-shell
+    ports:
+      - "3000:3000"
+    environment:
+      # Client-side API calls go to localhost (browser -> host -> docker)
+      NEXT_PUBLIC_WEB_BFF_URL: http://localhost:8080
+      # Server-side API calls use container network
+      WEB_BFF_URL: http://web-bff:8080
+      NODE_ENV: production
+    depends_on:
+      web-bff:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - ecosystem
+
+networks:
+  ecosystem:
+    name: acme-ecosystem
+    driver: bridge
+
+volumes:
+  postgres-user-data:
+  postgres-credit-card-data:
+  postgres-analytics-data:
+  redpanda-data:

@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: web-bff
+
+# Service discovery for Docker containers
+services:
+  user:
+    url: http://user-service:8081
+  credit-card:
+    url: http://credit-card-service:8082
+  analytics:
+    url: http://analytics-service:8083
+
+# OpenTelemetry
+otel:
+  exporter:
+    otlp:
+      endpoint: http://otel-collector:4317
+
+# Logging
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com.ecosystem: INFO
+    org.springframework: INFO
+
