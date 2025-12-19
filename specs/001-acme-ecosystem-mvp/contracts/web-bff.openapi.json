@@ -1,0 +1,241 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Web BFF API (ACME Ecosystem MVP)",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "paths": {
+    "/api/user/session/login": {
+      "post": {
+        "summary": "Demo login (user:user or admin:admin)",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/credit-card/offer": {
+      "get": {
+        "summary": "Get pre-approved offer (feature-flagged)",
+        "operationId": "getPreapprovedOffer",
+        "responses": {
+          "200": {
+            "description": "Offer is available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreapprovedOffer"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No offer / disabled"
+          }
+        }
+      }
+    },
+    "/api/credit-card/onboarding/sign": {
+      "post": {
+        "summary": "Digital signature to onboard",
+        "operationId": "signOnboarding",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Onboarding complete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditCardAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid signature"
+          }
+        }
+      }
+    },
+    "/api/credit-card/actions/simulate-purchase": {
+      "post": {
+        "summary": "Simulate a purchase for a random amount",
+        "operationId": "simulatePurchase",
+        "responses": {
+          "200": {
+            "description": "Purchase simulation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/credit-card/actions/raise-limit": {
+      "post": {
+        "summary": "Raise credit card limit",
+        "operationId": "raiseLimit",
+        "responses": {
+          "200": {
+            "description": "Limit updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditCardAccount"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/credit-card/actions/reset": {
+      "post": {
+        "summary": "Reset simulation state",
+        "operationId": "resetCreditCard",
+        "responses": {
+          "200": {
+            "description": "Reset completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditCardAccount"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analytics/events": {
+      "post": {
+        "summary": "Record a navigation or major action event",
+        "operationId": "recordAnalyticsEvent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyticsEventIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "required": ["userEcosystemId", "role", "token"],
+        "properties": {
+          "userEcosystemId": { "type": "string" },
+          "role": { "type": "string", "enum": ["user", "admin"] },
+          "token": { "type": "string", "description": "Demo auth token for MVP" }
+        }
+      },
+      "PreapprovedOffer": {
+        "type": "object",
+        "required": ["userEcosystemId", "preapprovedLimit"],
+        "properties": {
+          "userEcosystemId": { "type": "string" },
+          "preapprovedLimit": { "type": "number" }
+        }
+      },
+      "SignRequest": {
+        "type": "object",
+        "required": ["signatureText"],
+        "properties": {
+          "signatureText": { "type": "string", "description": "Expected: I agree" }
+        }
+      },
+      "CreditCardAccount": {
+        "type": "object",
+        "required": ["userEcosystemId", "status", "currentLimit", "availableLimit"],
+        "properties": {
+          "userEcosystemId": { "type": "string" },
+          "status": { "type": "string", "enum": ["preapproved", "onboarded"] },
+          "currentLimit": { "type": "number" },
+          "availableLimit": { "type": "number" }
+        }
+      },
+      "PurchaseResult": {
+        "type": "object",
+        "required": ["amount", "approved", "account"],
+        "properties": {
+          "amount": { "type": "number" },
+          "approved": { "type": "boolean" },
+          "reason": { "type": "string" },
+          "account": { "$ref": "#/components/schemas/CreditCardAccount" }
+        }
+      },
+      "AnalyticsEventIn": {
+        "type": "object",
+        "required": ["eventName", "occurredAt", "journeyId", "userEcosystemId"],
+        "properties": {
+          "eventName": { "type": "string" },
+          "occurredAt": { "type": "string", "format": "date-time" },
+          "journeyId": { "type": "string" },
+          "userEcosystemId": { "type": "string" },
+          "metadata": { "type": "object", "additionalProperties": true }
+        }
+      }
+    }
+  }
+}
+
+
