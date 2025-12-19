@@ -1,23 +1,33 @@
 # 🏗️ Whitelabel Ecosystem Platform
 
-> **A product-platform built for practicing AI-first engineering on cutting-edge technology**
+A multi-product platform demonstrating modern architecture patterns and AI-first engineering practices.
 
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](DOCKER.md)
 [![Make](https://img.shields.io/badge/Make-Automated-green)](Makefile)
-[![Architecture](https://img.shields.io/badge/DDD-Clean%20Architecture-orange)](#architecture)
+[![DDD](https://img.shields.io/badge/DDD-Clean%20Architecture-orange)](#architecture)
 
-## 🎯 What is This?
+## Quick Start
 
-A **whitelabel ecosystem platform** that serves as a foundation for building multiple products on top of a shared infrastructure. This is a learning and experimentation platform for:
+```bash
+make up                    # Start all services
+open http://localhost:3000 # Open browser
+# Login: user:user or admin:admin
+```
 
-- 🤖 **AI-First Engineering** - Practicing spec-driven development with AI agents
-- 🏛️ **Modern Architecture** - Microservices, DDD, Event-Driven Design, Data Mesh
-- 🔍 **Observability** - End-to-end tracing with OpenTelemetry and Splunk
-- 🚀 **DevOps Best Practices** - Docker, feature flags, trunk-based development
+**New here?** See [QUICK_START.md](QUICK_START.md) for detailed setup.
 
-## 🏗️ Architecture
+## What Is This?
 
-The platform follows a layered architecture designed to support multiple channels and products:
+A whitelabel ecosystem platform for running multiple financial products on shared infrastructure. Built to practice:
+
+- 🏛️ **Modern Architecture** - DDD, Clean Architecture, Event-Driven Design, BFF pattern
+- 🤖 **AI-First Engineering** - Spec-driven development with AI agents (see [AGENTS.md](AGENTS.md))
+- 🔍 **Observability** - End-to-end tracing with journeyId and userEcosystemId
+- 🚀 **DevOps** - Docker-first, feature flags, trunk-based development
+
+## Architecture
+
+The platform uses a layered architecture supporting multiple channels and products:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -48,141 +58,41 @@ The platform follows a layered architecture designed to support multiple channel
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Design Principles:**
-- 🎨 **Domain-Driven Design** - Clear bounded contexts per domain
-- 🔄 **Event-Driven** - Kafka/Redpanda for async communication
-- 🏢 **BFF Pattern** - Optimized backends per frontend type
-- 📊 **Data Mesh** - Decentralized data ownership with centralized lakehouse
-- 🔭 **Observable by Default** - journeyId & userEcosystemId throughout
+**Key Principles:**
+- **Domain-Driven Design** - Clear bounded contexts per domain
+- **Event-Driven** - Redpanda/Kafka for async communication
+- **BFF Pattern** - Backend optimized for each frontend type
+- **Data Mesh** - Decentralized data ownership with centralized lakehouse
+- **Observable by Default** - journeyId & userEcosystemId propagate through all requests
 
-## 🚀 Quick Start
-
-```bash
-# Start the entire platform
-make up
-
-# Open your browser
-open http://localhost:3000
-
-# Login with demo credentials
-# user:user or admin:admin
-```
-
-That's it! All services, databases, and infrastructure start automatically.
-
-## 📦 What's Included
-
-### Demo Products
-- **Credit Card System** - Pre-approved offers, onboarding, purchases, limit management
-- **User Management** - Authentication, profiles, ecosystem-wide identity
-
-### Platform Components
-- **Web Shell** (Next.js 14) - Modern, responsive frontend
-- **Web BFF** (Spring Boot 3.2, Java 21) - Backend-for-Frontend orchestration
-- **Domain Services** - Microservices for User, Credit Card, Analytics
-- **Event Mesh** (Redpanda/Kafka) - Event-driven architecture
-- **Data Lakehouse** (dbt + DuckDB → BigQuery) - Customer 360 analytics
-- **Observability** (OpenTelemetry + Splunk) - Full distributed tracing
-
-## 💻 Technology Stack
+## Technology Stack
 
 | Layer | Technologies |
 |-------|-------------|
-| **Frontend** | Next.js 14, React, TypeScript, Tailwind CSS, shadcn/ui |
+| **Frontend** | Next.js 14, React, TypeScript, Tailwind CSS |
 | **Backend** | Spring Boot 3.2 (Java 21), Express (TypeScript) |
 | **Data** | PostgreSQL (per domain), DuckDB, dbt |
 | **Messaging** | Redpanda (Kafka-compatible) |
 | **Observability** | OpenTelemetry, Splunk |
 | **Infrastructure** | Docker, Docker Compose, Make |
 
-## 🎓 Learning Objectives
+## Current Features
 
-This platform is designed to practice:
+### Demo Products
+- **Credit Card System** - Pre-approved offers, onboarding, purchases, limit management
+- **User Management** - Authentication, profiles, ecosystem-wide identity
 
-1. **AI-First Development**
-   - Spec-driven development with AI agents
-   - Constitution-based development principles
-   - Automated implementation from specifications
+### Platform Components
+- **Web Shell** (Next.js 14) - Frontend shell at `platform/shells/web/`
+- **Web BFF** (Spring Boot 3.2) - Backend-for-Frontend at `domains/web-bff/`
+- **Domain Services** - User, Credit Card, Analytics services at `domains/{name}/`
+- **Event Mesh** (Redpanda) - Event-driven architecture
+- **Data Lakehouse** (dbt + DuckDB) - Customer 360 analytics at `domains/data-lakehouse/`
+- **Observability** (OpenTelemetry) - Distributed tracing via `shared/observability/`
 
-2. **Modern Architecture Patterns**
-   - Microservices with clear boundaries
-   - Backend-for-Frontend (BFF) pattern
-   - Event-driven architecture
-   - Data Mesh principles
+See [GETTING_STARTED.md](GETTING_STARTED.md) to try these features.
 
-3. **Production-Grade Practices**
-   - End-to-end observability (journeyId propagation)
-   - Feature flagging
-   - Health checks and graceful degradation
-   - Docker containerization
-
-4. **Multi-Product Platform**
-   - Whitelabel foundation
-   - Multiple products sharing infrastructure
-   - Cross-domain data aggregation (Customer 360)
-
-## 📚 Documentation
-
-- **[GETTING_STARTED.md](GETTING_STARTED.md)** - 2-minute quickstart guide
-- **[DOCKER.md](DOCKER.md)** - Complete Docker commands reference
-- **[CHANGELOG.md](CHANGELOG.md)** - What's new and migration guide
-- **[specs/](specs/001-acme-ecosystem-mvp/)** - Detailed specifications and architecture decisions
-- **[AGENTS.md](AGENTS.md)** - AI agent development conventions
-
-## 🛠️ Development
-
-### Running Locally (Docker)
-```bash
-make up          # Start all services
-make logs        # View logs
-make status      # Check status
-make down        # Stop services
-make clean       # Remove all data
-```
-
-### Making Changes
-```bash
-# 1. Make your code changes
-# 2. Rebuild affected service
-make build-web   # or build-bff, build-user, etc.
-
-# 3. Restart
-make restart
-```
-
-See all commands: `make help`
-
-## 🌟 Key Features
-
-- ✅ **Containerized Everything** - Single command to start the entire platform
-- ✅ **Health Checks** - Automatic dependency management and health monitoring
-- ✅ **Observability** - journeyId and userEcosystemId tracked end-to-end
-- ✅ **Feature Flags** - Environment-based feature toggling
-- ✅ **Event-Driven** - Kafka/Redpanda for asynchronous communication
-- ✅ **Data Lakehouse** - Customer 360 view with dbt transformations
-- ✅ **Multi-Tenancy Ready** - Whitelabel design for multiple products
-
-## 🎯 Use Cases
-
-This platform can be used to:
-- Build multiple banking/fintech products on a shared foundation
-- Practice modern software architecture patterns
-- Experiment with AI-assisted development
-- Learn event-driven and data mesh architectures
-- Prototype new features with feature flags
-
-## 🤝 Contributing
-
-This is a personal learning and experimentation platform. Feel free to fork and adapt for your own learning!
-
-### Development Principles
-- **KISS** (Keep It Simple, Stupid)
-- **Clean Code** and **Clean Architecture**
-- **Trunk-Based Development**
-- **Feature Flags** for incomplete work
-- **Spec-Driven** with AI assistance
-
-## 📋 Project Structure
+## Project Structure
 
 ```
 platform/
@@ -201,26 +111,81 @@ shared/
   contracts/           # API contracts and schemas
 
 specs/                 # Feature specs and plans
-scripts/               # Development scripts
 ```
 
-## 🔮 Future Enhancements
+## Development Commands
 
-Potential areas for expansion:
-- Additional channels (Mobile app, Backoffices, ATMs)
-- More domain services (Loans, Investments, Insurance)
-- API Gateway with rate limiting and authentication
-- Multi-region deployment
-- Kubernetes deployment manifests
-- CI/CD pipelines
-- Automated testing suites
+```bash
+make up              # Start all services
+make down            # Stop all services
+make logs            # View logs
+make status          # Check service status
+make health          # Health check all services
+make clean           # Remove all data
+make help            # See all commands
+```
 
-## 📜 License
+See [DOCKER.md](DOCKER.md) for complete Docker reference.
+
+## Making Changes
+
+1. Edit code in `platform/`, `domains/`, or `shared/`
+2. Rebuild: `make build-web` (or `build-bff`, `build-user`, etc.)
+3. Restart: `make restart`
+4. Check logs: `make logs-web` (or `logs-bff`, etc.)
+
+## Documentation
+
+- **[QUICK_START.md](QUICK_START.md)** - Get running in 2 commands
+- **[GETTING_STARTED.md](GETTING_STARTED.md)** - Feature walkthrough
+- **[DOCKER.md](DOCKER.md)** - Complete Docker commands reference
+- **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - How to test all features
+- **[AGENTS.md](AGENTS.md)** - Development conventions and AI agent guidelines
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and migration notes
+- **[specs/](specs/001-acme-ecosystem-mvp/)** - Detailed specifications
+
+## Learning Objectives
+
+Practice modern software engineering:
+
+1. **Architecture Patterns**
+   - Microservices with clear domain boundaries (DDD)
+   - Backend-for-Frontend (BFF) pattern
+   - Event-driven architecture
+   - Data Mesh principles
+
+2. **AI-First Development**
+   - Spec-driven development with AI agents
+   - Constitution-based development principles
+   - Automated implementation from specifications
+
+3. **Production Practices**
+   - End-to-end observability (journeyId propagation)
+   - Feature flagging for controlled rollout
+   - Health checks and graceful degradation
+   - Docker containerization and environment parity
+
+4. **Multi-Product Platform**
+   - Whitelabel foundation
+   - Multiple products sharing infrastructure
+   - Cross-domain data aggregation (Customer 360)
+
+## Development Principles
+
+From [AGENTS.md](AGENTS.md):
+
+- **KISS** (Keep It Simple, Stupid) - Simplest solution that meets requirements
+- **Clean Code** and **Clean Architecture** - Readable, maintainable, well-bounded
+- **Trunk-Based Development** - Short-lived branches, frequent merges
+- **Feature Flags** - Control rollout and hide incomplete work
+- **Spec-Driven** - AI-assisted development from specifications
+
+See [.specify/memory/constitution.md](.specify/memory/constitution.md) for complete project conventions.
+
+## Contributing
+
+Personal learning platform. Fork and adapt for your own experiments!
+
+## License
 
 Private - Learning and Experimentation Platform
-
----
-
-**Built with ❤️ using AI-first engineering practices**
-
-*This is a sandbox for practicing modern software engineering with AI assistance. The goal is to build a production-quality architecture while learning cutting-edge technologies.*

@@ -1,114 +1,83 @@
-# 🚀 Quick Start - Get Running in 5 Minutes
+# 🚀 Quick Start
 
-## Current Status
+Get the platform running in 2 commands.
 
-The platform infrastructure is ready, but application services need dependency fixes.
+## Prerequisites
 
-## Option 1: Run Infrastructure Only (Works Now!)
+- Docker Desktop or Docker Engine (20.10+)
+- Docker Compose (2.0+)
+- Make (optional, for convenience)
+
+## Start Everything
 
 ```bash
-# Start databases and Kafka
-docker compose up -d postgres-user postgres-credit-card postgres-analytics redpanda otel-collector
+# Start all services
+make up
 
-# Check status
-docker compose ps
+# Open browser
+open http://localhost:3000
 ```
 
-You now have:
-- ✅ PostgreSQL databases on ports 5432, 5433, 5434
-- ✅ Redpanda (Kafka) on port 19092
-- ✅ OpenTelemetry Collector on port 4317
+Login with `user:user` or `admin:admin`.
 
-## Option 2: Run Services Locally (Recommended for Now)
+## What's Running
 
-### 1. Start Infrastructure
+| Service | Port | Description |
+|---------|------|-------------|
+| Web Shell | 3000 | Next.js frontend |
+| Web BFF | 8080 | Backend-for-Frontend API |
+| User Service | 8081 | User management |
+| Credit Card Service | 8082 | Credit card operations |
+| Analytics Service | 8083 | Event analytics |
+| PostgreSQL (User) | 5432 | User database |
+| PostgreSQL (Cards) | 5433 | Credit card database |
+| PostgreSQL (Analytics) | 5434 | Analytics database |
+| Redpanda | 19092 | Event streaming |
+
+## Common Commands
+
 ```bash
-docker compose up -d postgres-user postgres-credit-card postgres-analytics redpanda otel-collector
+make status      # Check service status
+make logs        # View all logs
+make health      # Health check all services
+make down        # Stop all services
+make clean       # Stop and remove all data
+make help        # See all available commands
 ```
 
-### 2. Run Web Shell
+## Troubleshooting
+
+### Services not starting?
 ```bash
-cd platform/shells/web
-npm install
-npm run dev
+make logs        # Check for errors
+make rebuild     # Rebuild from scratch
+make up          # Try again
 ```
-Access: http://localhost:3000
 
-### 3. Run Web BFF
+### Port conflicts?
+Edit `docker-compose.yml` to use different ports.
+
+### Clean slate?
 ```bash
-cd domains/web-bff
-./gradlew bootRun
+make clean       # Remove all data
+make up          # Start fresh
 ```
-API: http://localhost:8080
-
-### 4. Run User Service
-```bash
-cd domains/user
-./gradlew bootRun
-```
-API: http://localhost:8081
-
-### 5. Run Credit Card Service
-```bash
-cd domains/credit-card
-./gradlew bootRun
-```
-API: http://localhost:8082
-
-## Testing
-
-Once services are running:
-
-1. **Open browser**: http://localhost:3000
-2. **Login**: `user:user` or `admin:admin`
-3. **Test features**:
-   - View dashboard
-   - Accept credit card offer
-   - Simulate purchases
-   - Raise credit limit
-   - Reset account
-
-## What Needs Fixing for Full Docker
-
-### Java Services
-- OpenTelemetry dependency versions need alignment
-- Solution: Update `build.gradle.kts` with compatible versions
-
-### Analytics Service
-- Fastify logger configuration needs update
-- Solution: Fix `server.ts` logger initialization
 
 ## Next Steps
 
-1. **Use the platform** with local services (works perfectly!)
-2. **Fix Docker issues** (optional, for full containerization)
-3. **Add more features** using AI-first development
+- **[README.md](README.md)** - Architecture overview and learning objectives
+- **[DOCKER.md](DOCKER.md)** - Complete Docker command reference
+- **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - How to test all features
+- **[AGENTS.md](AGENTS.md)** - Development conventions
 
-## Commands Reference
+## Development Workflow
 
-```bash
-# Infrastructure
-docker compose up -d postgres-user postgres-credit-card postgres-analytics redpanda
-docker compose ps
-docker compose logs -f
-
-# Connect to databases
-docker compose exec postgres-user psql -U user -d user_db
-docker compose exec postgres-credit-card psql -U user -d credit_card_db
-docker compose exec postgres-analytics psql -U user -d analytics_db
-
-# Stop everything
-docker compose down
-```
-
-## Full Documentation
-
-- [TESTING_GUIDE.md](TESTING_GUIDE.md) - Complete testing walkthrough
-- [DOCKER.md](DOCKER.md) - Docker commands reference
-- [GETTING_STARTED.md](GETTING_STARTED.md) - Detailed setup guide
-- [README.md](README.md) - Architecture overview
+1. Make code changes
+2. Rebuild affected service: `make build-web` (or `build-bff`, `build-user`, etc.)
+3. Restart: `make restart`
+4. Check logs: `make logs-web` (or `logs-bff`, etc.)
 
 ---
 
-**The platform works great with local services! Docker is optional for now.** 🎉
+**Need help?** Run `make help` for all available commands.
 

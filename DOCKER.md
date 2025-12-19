@@ -1,249 +1,253 @@
-# Docker Deployment Guide
+# Docker Guide
 
-This guide explains how to run the ACME Ecosystem Platform using Docker and Docker Compose.
-
-## Prerequisites
-
-- Docker Desktop or Docker Engine (20.10+)
-- Docker Compose (2.0+)
-- Make (optional but recommended)
+Complete reference for running the platform with Docker.
 
 ## Quick Start
 
-### Using Make (Recommended)
-
 ```bash
-# Start all services
-make up
-
-# View status
-make status
-
-# View logs
-make logs
-
-# Stop services
-make down
-
-# Clean everything (including data)
-make clean
+make up      # Start all services
+make down    # Stop all services
+make clean   # Stop and remove all data
 ```
 
-### Using Docker Compose Directly
+## Prerequisites
+
+- Docker Desktop or Docker Engine 20.10+
+- Docker Compose 2.0+
+- Make (optional, see "Without Make" section)
+
+## Services
+
+The platform runs these containerized services:
+
+### Infrastructure
+- **postgres-user** (port 5432) - User database
+- **postgres-credit-card** (port 5433) - Credit card database
+- **postgres-analytics** (port 5434) - Analytics database
+- **redpanda** (port 19092) - Event streaming
+- **otel-collector** (ports 4317/4318) - OpenTelemetry
+
+### Application
+- **web-shell** (port 3000) - Next.js frontend
+- **web-bff** (port 8080) - Backend-for-Frontend
+- **user-service** (port 8081) - User domain
+- **credit-card-service** (port 8082) - Credit card domain
+- **analytics-service** (port 8083) - Analytics domain
+
+## Common Commands
+
+### Starting & Stopping
 
 ```bash
-# Start all services
-docker compose up -d --build
-
-# View logs
-docker compose logs -f
-
-# Stop services
-docker compose down
-
-# Clean everything
-docker compose down -v
+make up          # Start all services
+make down        # Stop all services
+make restart     # Restart all services
 ```
-
-## Architecture
-
-The Docker deployment includes:
-
-### Infrastructure Services
-- **postgres-user** (port 5432): User data
-- **postgres-credit-card** (port 5433): Credit card data
-- **postgres-analytics** (port 5434): Analytics data
-- **redpanda** (port 19092): Kafka-compatible event streaming
-- **otel-collector** (port 4317/4318): OpenTelemetry collector
-
-### Application Services
-- **web-shell** (port 3000): Next.js frontend
-- **web-bff** (port 8080): Backend-for-Frontend
-- **user-service** (port 8081): User domain service
-- **credit-card-service** (port 8082): Credit card domain service
-- **analytics-service** (port 8083): Analytics domain service
-
-## Make Commands
-
-### General
-- `make help` - Display all available commands
-- `make up` - Start all services
-- `make down` - Stop all services
-- `make restart` - Restart all services
 
 ### Building
-- `make build` - Build all services
-- `make rebuild` - Rebuild from scratch (no cache)
-- `make build-web` - Build only web shell
-- `make build-bff` - Build only Web BFF
-- `make build-user` - Build only User service
-- `make build-credit-card` - Build only Credit Card service
-- `make build-analytics` - Build only Analytics service
+
+```bash
+make build       # Build all services
+make rebuild     # Rebuild from scratch (no cache)
+```
+
+Build individual services:
+
+```bash
+make build-web           # Web shell
+make build-bff           # Web BFF
+make build-user          # User service
+make build-credit-card   # Credit card service
+make build-analytics     # Analytics service
+```
 
 ### Monitoring
-- `make status` - Show service status
-- `make logs` - View all logs
-- `make logs-web` - View web shell logs
-- `make logs-bff` - View BFF logs
-- `make logs-user` - View User service logs
-- `make logs-credit-card` - View Credit Card service logs
-- `make logs-analytics` - View Analytics service logs
-- `make logs-infra` - View infrastructure logs
-- `make health` - Check health of all services
 
-### Cleanup
-- `make clean` - Stop and remove volumes (⚠️ deletes data)
-- `make clean-all` - Stop, remove volumes and images
-- `make prune` - Remove all unused Docker resources
+```bash
+make status      # Show service status
+make health      # Health check all services
+make logs        # View all logs
+```
+
+View logs for specific services:
+
+```bash
+make logs-web            # Web shell
+make logs-bff            # Web BFF
+make logs-user           # User service
+make logs-credit-card    # Credit card service
+make logs-analytics      # Analytics service
+make logs-infra          # Infrastructure (DBs, Kafka, etc.)
+```
 
 ### Database Access
-- `make db-user` - Connect to User database
-- `make db-credit-card` - Connect to Credit Card database
-- `make db-analytics` - Connect to Analytics database
 
-### Development Tools
-- `make shell-web` - Open shell in web container
-- `make shell-bff` - Open shell in BFF container
-- `make shell-user` - Open shell in User service container
-- `make shell-credit-card` - Open shell in Credit Card service container
-- `make shell-analytics` - Open shell in Analytics service container
+```bash
+make db-user          # Connect to User database
+make db-credit-card   # Connect to Credit Card database
+make db-analytics     # Connect to Analytics database
+```
+
+### Container Shell Access
+
+```bash
+make shell-web           # Web shell container
+make shell-bff           # Web BFF container
+make shell-user          # User service container
+make shell-credit-card   # Credit card service container
+make shell-analytics     # Analytics service container
+```
+
+### Cleanup
+
+```bash
+make clean       # Stop and remove volumes (⚠️ deletes data)
+make clean-all   # Stop, remove volumes and images
+make prune       # Remove all unused Docker resources
+```
+
+## Without Make
+
+If you don't have Make installed:
+
+```bash
+# Start
+docker compose up -d --build
+
+# Stop
+docker compose down
+
+# Clean
+docker compose down -v
+
+# Logs
+docker compose logs -f
+
+# Status
+docker compose ps
+
+# Build specific service
+docker compose build web-shell
+
+# Shell access
+docker compose exec web-shell sh
+```
 
 ## Access Points
 
-Once all services are running:
+Once running:
 
-- **Web Application**: http://localhost:3000
-- **Web BFF API**: http://localhost:8080
-- **User Service API**: http://localhost:8081
-- **Credit Card Service API**: http://localhost:8082
-- **Analytics Service API**: http://localhost:8083
-- **Redpanda Console**: http://localhost:9644
-
-## Login Credentials
-
-Demo credentials for testing:
-- Username: `user` / Password: `user`
-- Username: `admin` / Password: `admin`
+- **Web App:** http://localhost:3000
+- **Web BFF API:** http://localhost:8080
+- **User Service:** http://localhost:8081
+- **Credit Card Service:** http://localhost:8082
+- **Analytics Service:** http://localhost:8083
+- **Redpanda Console:** http://localhost:9644
 
 ## Startup Time
 
-First-time startup can take 2-5 minutes due to:
-- Image downloads
-- Java service compilation
-- Database initialization
-- Health checks
-
-Subsequent startups are much faster (30-60 seconds).
+- **First time:** 2-5 minutes (downloads images, builds services)
+- **Subsequent:** 30-60 seconds (uses cached images)
 
 ## Troubleshooting
 
 ### Services not starting
+
 ```bash
-# Check service status
-make status
-
-# View logs for specific service
-make logs-bff  # or logs-user, logs-credit-card, etc.
-
-# Check health
-make health
+make status      # Check what's running
+make logs        # View error logs
+make rebuild     # Rebuild from scratch
+make up          # Try again
 ```
 
 ### Port conflicts
-If you see "port already in use" errors:
+
+If you see "port already in use":
+
 1. Check what's using the port: `lsof -i :PORT`
-2. Either stop that service or change the port in `docker-compose.yml`
+2. Stop that service, or
+3. Edit `docker-compose.yml` to use different ports
 
-### Database connection issues
+### Database connection errors
+
 ```bash
-# Check database health
-docker compose ps
-
-# Connect to database directly
-make db-user  # or db-credit-card, db-analytics
+docker compose ps | grep postgres  # Check DB status
+make db-user                        # Try connecting
+make clean && make up               # Nuclear option
 ```
 
 ### Clean slate
-If things are really broken:
+
+Remove everything and start fresh:
+
 ```bash
-make clean-all  # Remove everything
-make up         # Start fresh
+make clean-all   # Remove containers, volumes, images
+make up          # Start fresh
 ```
 
 ## Development Workflow
 
-### Making code changes
-
-1. Make your code changes
-2. Rebuild the affected service:
+1. Make code changes
+2. Rebuild affected service:
    ```bash
-   make build-web  # or build-bff, build-user, etc.
+   make build-web    # or build-bff, build-user, etc.
    ```
 3. Restart services:
    ```bash
    make restart
    ```
-
-### Viewing logs during development
-
-Keep logs open in a separate terminal:
-```bash
-make logs
-```
-
-Or for a specific service:
-```bash
-make logs-bff
-```
-
-## Production Considerations
-
-For production deployment:
-
-1. Update credentials in `.env.docker`
-2. Use proper Splunk HEC endpoint and token
-3. Enable TLS/SSL for external endpoints
-4. Configure proper resource limits in `docker-compose.yml`
-5. Use Docker secrets for sensitive data
-6. Consider using Kubernetes for orchestration
-7. Set up proper backup strategies for databases
+4. Check logs:
+   ```bash
+   make logs-web     # or logs-bff, etc.
+   ```
 
 ## Network Architecture
 
-All services are on the `acme-ecosystem` bridge network:
+All services run on the `acme-ecosystem` bridge network:
+
 - Services communicate using container names (e.g., `web-bff:8080`)
 - External access via published ports (e.g., `localhost:8080`)
 
 ## Data Persistence
 
-Data is persisted in Docker volumes:
+Data persists in Docker volumes:
+
 - `postgres-user-data`
 - `postgres-credit-card-data`
 - `postgres-analytics-data`
 - `redpanda-data`
 
-These volumes survive container restarts but are removed with `make clean`.
+Volumes survive container restarts but are removed with `make clean`.
 
-## Performance Tuning
+## Environment Variables
 
-### Java Services
-Adjust JVM memory in `docker-compose.yml`:
-```yaml
-environment:
-  JAVA_OPTS: "-Xmx1g -Xms512m"  # Increase for better performance
+Services read config from environment variables. Key variables are defined in `docker-compose.yml`.
+
+For local overrides, create `.env`:
+
+```bash
+# Example .env
+CREDIT_CARDS_PRE_APPROVED_OFFERS=true
+SPLUNK_HEC_URL=http://your-splunk:8088
+SPLUNK_HEC_TOKEN=your-token
 ```
 
-### Database
-Adjust PostgreSQL resources:
-```yaml
-environment:
-  POSTGRES_SHARED_BUFFERS: "256MB"
-  POSTGRES_EFFECTIVE_CACHE_SIZE: "1GB"
-```
+Then restart: `make restart`
+
+## Production Considerations
+
+For production deployment:
+
+1. Use secrets management (not `.env` files)
+2. Enable TLS/SSL for external endpoints
+3. Configure proper resource limits
+4. Set up backup strategies for databases
+5. Use proper Splunk HEC endpoint and token
+6. Consider managed services instead of self-hosted DBs
 
 ## Next Steps
 
-- Read [README.md](README.md) for architectural overview
-- Read [quickstart.md](specs/001-acme-ecosystem-mvp/quickstart.md) for development details
-- Check [AGENTS.md](AGENTS.md) for development conventions
-
+- **Try the platform:** [GETTING_STARTED.md](GETTING_STARTED.md)
+- **Test features:** [TESTING_GUIDE.md](TESTING_GUIDE.md)
+- **Architecture overview:** [README.md](README.md)
+- **Development conventions:** [AGENTS.md](AGENTS.md)
