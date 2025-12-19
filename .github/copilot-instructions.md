@@ -276,10 +276,10 @@ When there's a conflict between documents:
 
 New to this repository? Start here:
 
-1. Read **[GETTING_STARTED.md](../GETTING_STARTED.md)** - 2-minute quickstart
-2. Read **[README.md](../README.md)** - Architecture overview
-3. Read **[AGENTS.md](../AGENTS.md)** - Development conventions
-4. Review **[.specify/memory/constitution.md](../.specify/memory/constitution.md)** - Core principles
+1. Read **GETTING_STARTED.md** - 2-minute quickstart
+2. Read **README.md** - Architecture overview
+3. Read **AGENTS.md** - Development conventions
+4. Review **.specify/memory/constitution.md** - Core principles
 5. Run `make up` to start the platform locally
 
 ## Key Files to Reference
