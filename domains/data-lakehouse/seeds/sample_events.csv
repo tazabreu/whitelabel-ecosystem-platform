@@ -1,0 +1,18 @@
+event_id,event_name,domain,entity,action,timestamp,journey_id,user_ecosystem_id,trace_id,span_id,source,metadata
+evt_001,logged_in,user,session,created,2025-12-19T10:00:00Z,jrn_journey001,usr_demo_user_001,trace001,span001,web-bff,"{}"
+evt_002,page_viewed,platform,page,viewed,2025-12-19T10:00:05Z,jrn_journey001,usr_demo_user_001,trace001,span002,web-shell,"{""path"": ""/""}"
+evt_003,offer_viewed,credit-card,offer,viewed,2025-12-19T10:00:10Z,jrn_journey001,usr_demo_user_001,trace001,span003,web-bff,"{""limit"": 5000}"
+evt_004,onboarding_signed,credit-card,onboarding,signed,2025-12-19T10:01:00Z,jrn_journey001,usr_demo_user_001,trace001,span004,web-bff,"{}"
+evt_005,purchase_simulated,credit-card,purchase,simulated,2025-12-19T10:02:00Z,jrn_journey001,usr_demo_user_001,trace001,span005,web-bff,"{""amount"": 125.50, ""status"": ""approved""}"
+evt_006,purchase_simulated,credit-card,purchase,simulated,2025-12-19T10:02:30Z,jrn_journey001,usr_demo_user_001,trace001,span006,web-bff,"{""amount"": 89.99, ""status"": ""approved""}"
+evt_007,limit_raised,credit-card,limit,raised,2025-12-19T10:03:00Z,jrn_journey001,usr_demo_user_001,trace001,span007,web-bff,"{""oldLimit"": 5000, ""newLimit"": 7000}"
+evt_008,logged_out,user,session,ended,2025-12-19T10:05:00Z,jrn_journey001,usr_demo_user_001,trace001,span008,web-bff,"{}"
+evt_009,logged_in,user,session,created,2025-12-19T11:00:00Z,jrn_journey002,usr_demo_admin_001,trace002,span001,web-bff,"{}"
+evt_010,page_viewed,platform,page,viewed,2025-12-19T11:00:05Z,jrn_journey002,usr_demo_admin_001,trace002,span002,web-shell,"{""path"": ""/""}"
+evt_011,offer_viewed,credit-card,offer,viewed,2025-12-19T11:00:10Z,jrn_journey002,usr_demo_admin_001,trace002,span003,web-bff,"{""limit"": 10000}"
+evt_012,onboarding_signed,credit-card,onboarding,signed,2025-12-19T11:01:00Z,jrn_journey002,usr_demo_admin_001,trace002,span004,web-bff,"{}"
+evt_013,purchase_simulated,credit-card,purchase,simulated,2025-12-19T11:02:00Z,jrn_journey002,usr_demo_admin_001,trace002,span005,web-bff,"{""amount"": 450.00, ""status"": ""approved""}"
+evt_014,account_reset,credit-card,account,reset,2025-12-19T11:03:00Z,jrn_journey002,usr_demo_admin_001,trace002,span006,web-bff,"{}"
+evt_015,logged_in,user,session,created,2025-12-19T12:00:00Z,jrn_journey003,usr_demo_user_001,trace003,span001,web-bff,"{}"
+evt_016,navigation,platform,navigation,navigated,2025-12-19T12:00:10Z,jrn_journey003,usr_demo_user_001,trace003,span002,web-shell,"{""from"": ""/"", ""to"": ""/dev/design-system""}"
+

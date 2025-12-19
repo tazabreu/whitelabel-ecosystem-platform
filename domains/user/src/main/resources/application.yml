@@ -1,0 +1,62 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:postgresql://${USER_DB_HOST:localhost}:${USER_DB_PORT:5432}/${USER_DB_NAME:user_db}
+    username: ${USER_DB_USER:postgres}
+    password: ${USER_DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Demo auth credentials (MVP only)
+demo:
+  auth:
+    secret: ${DEMO_AUTH_SECRET:demo-secret-change-in-prod}
+    users:
+      - username: user
+        password: user
+        role: USER
+        ecosystemId: usr_demo_user_001
+      - username: admin
+        password: admin
+        role: ADMIN
+        ecosystemId: usr_demo_admin_001
+
+# Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# OpenTelemetry
+otel:
+  exporter:
+    otlp:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318}
+  resource:
+    attributes:
+      service.name: user-service
+      deployment.environment: ${DEPLOYMENT_ENVIRONMENT:local}
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.ecosystem: DEBUG
+

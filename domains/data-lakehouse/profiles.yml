@@ -1,0 +1,25 @@
+# dbt Profiles for Ecosystem Lakehouse
+# Local development uses DuckDB, production targets BigQuery
+
+ecosystem_lakehouse:
+  target: local
+  outputs:
+    # Local development with DuckDB
+    local:
+      type: duckdb
+      path: 'warehouse/ecosystem.duckdb'
+      threads: 4
+      extensions:
+        - parquet
+        - httpfs
+
+    # BigQuery target (future)
+    # bigquery:
+    #   type: bigquery
+    #   method: service-account
+    #   project: "{{ env_var('GCP_PROJECT_ID') }}"
+    #   dataset: ecosystem_lakehouse
+    #   threads: 4
+    #   keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+    #   location: US
+

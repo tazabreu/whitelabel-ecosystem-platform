@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ecosystem.acme.com/schemas/analytics-event.json",
+  "title": "AnalyticsEvent",
+  "description": "Standard analytics event envelope for the ACME Ecosystem",
+  "type": "object",
+  "required": ["eventId", "eventName", "domain", "timestamp", "journeyId"],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Unique identifier for this event instance",
+      "pattern": "^evt_[a-zA-Z0-9_-]+$"
+    },
+    "eventName": {
+      "type": "string",
+      "description": "Name of the event (e.g., 'logged_in', 'offer_viewed')",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain that originated the event",
+      "enum": ["user", "credit-card", "analytics", "platform"]
+    },
+    "entity": {
+      "type": "string",
+      "description": "Entity type within the domain (e.g., 'session', 'offer', 'purchase')"
+    },
+    "action": {
+      "type": "string",
+      "description": "Action performed (e.g., 'created', 'viewed', 'signed')"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "journeyId": {
+      "type": "string",
+      "description": "Journey identifier for correlation",
+      "pattern": "^jrn_[a-zA-Z0-9_-]+$"
+    },
+    "userEcosystemId": {
+      "type": "string",
+      "description": "User ecosystem identifier (if authenticated)",
+      "pattern": "^usr_[a-zA-Z0-9_-]+$"
+    },
+    "traceId": {
+      "type": "string",
+      "description": "OpenTelemetry trace ID"
+    },
+    "spanId": {
+      "type": "string",
+      "description": "OpenTelemetry span ID"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source service that emitted the event"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional event-specific data",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
+

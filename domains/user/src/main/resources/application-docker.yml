@@ -1,0 +1,28 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:postgresql://postgres-user:5432/user_db
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+# OpenTelemetry
+otel:
+  exporter:
+    otlp:
+      endpoint: http://otel-collector:4317
+
+# Logging
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com.ecosystem: INFO
+    org.springframework: INFO
+

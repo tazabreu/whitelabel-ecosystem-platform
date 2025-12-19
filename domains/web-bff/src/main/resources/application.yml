@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: web-bff
+
+# Service URLs
+services:
+  user:
+    url: ${USER_SERVICE_URL:http://localhost:8081}
+  credit-card:
+    url: ${CREDIT_CARD_SERVICE_URL:http://localhost:8082}
+  analytics:
+    url: ${ANALYTICS_SERVICE_URL:http://localhost:8090}
+
+# Feature Flags (env-based for MVP)
+feature:
+  flags:
+    credit-cards:
+      pre-approved-offers: ${FEATURE_FLAG_CREDIT_CARDS_PRE_APPROVED_OFFERS:false}
+
+# Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# OpenTelemetry
+otel:
+  exporter:
+    otlp:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318}
+  resource:
+    attributes:
+      service.name: web-bff
+      deployment.environment: ${DEPLOYMENT_ENVIRONMENT:local}
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.ecosystem: DEBUG
+
