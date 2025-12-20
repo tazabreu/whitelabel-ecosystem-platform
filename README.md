@@ -2,9 +2,9 @@
 
 > **A product-platform built for practicing AI-first engineering on cutting-edge technology**
 
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue)](DOCKER.md)
-[![Make](https://img.shields.io/badge/Make-Automated-green)](Makefile)
-[![Architecture](https://img.shields.io/badge/DDD-Clean%20Architecture-orange)](#architecture)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue)
+![Make](https://img.shields.io/badge/Make-Automated-green)
+![Architecture](https://img.shields.io/badge/DDD-Clean%20Architecture-orange)
 
 ## 🎯 What is This?
 
@@ -123,11 +123,12 @@ This platform is designed to practice:
 
 ## 📚 Documentation
 
-- **[GETTING_STARTED.md](GETTING_STARTED.md)** - 2-minute quickstart guide
-- **[DOCKER.md](DOCKER.md)** - Complete Docker commands reference
-- **[CHANGELOG.md](CHANGELOG.md)** - What's new and migration guide
-- **[specs/](specs/001-acme-ecosystem-mvp/)** - Detailed specifications and architecture decisions
 - **[AGENTS.md](AGENTS.md)** - AI agent development conventions
+- **Makefile** - Run `make help` for all available commands
+- **Domain READMEs** - Technical documentation in each domain directory
+  - [Data Lakehouse](domains/data-lakehouse/README.md) - Customer 360 analytics
+  - [Feature Flags](shared/feature-flags/README.md) - Feature flag conventions
+  - [Observability](shared/observability/README.md) - Tracing and logging standards
 
 ## 🛠️ Development
 
@@ -200,7 +201,7 @@ shared/
   feature-flags/       # Feature flag abstractions
   contracts/           # API contracts and schemas
 
-specs/                 # Feature specs and plans
+.specify/              # Spec-driven development infrastructure
 scripts/               # Development scripts
 ```
 
